@@ -5,122 +5,185 @@
 
 /* ─────────────────────────────────────────────
    1. DAYS COUNTER
-   Change the year if needed (2024 or 2025)
    ───────────────────────────────────────────── */
 function updateDaysCounter() {
-  // ← Change the year here if your start date is different!
-  const startDate = new Date('2024-10-16T00:00:00');
+  // Change 2024 to 2025 if your start year is 2025
+  const startDate = new Date('2025-10-16T00:00:00');
   const today     = new Date();
-
-  // Calculate difference in full days
   const msPerDay  = 1000 * 60 * 60 * 24;
   const days      = Math.floor((today - startDate) / msPerDay);
 
-  // Animate the counter counting up
   const el = document.getElementById('daysCount');
   if (!el) return;
 
-  let current = 0;
-  const duration = 1800;              // animation time in ms
-  const steps    = Math.min(days, 80); // number of frames
+  let current  = 0;
+  const steps    = Math.min(days, 80);
   const increment = days / steps;
-  const interval  = duration / steps;
+  const interval  = 1800 / steps;
 
   const timer = setInterval(() => {
     current += increment;
-    if (current >= days) {
-      current = days;
-      clearInterval(timer);
-    }
+    if (current >= days) { current = days; clearInterval(timer); }
     el.textContent = Math.floor(current).toLocaleString();
   }, interval);
 }
 
 
 /* ─────────────────────────────────────────────
-   2. HEART RAIN
-   Creates falling hearts on page load
+   2. LIGHTBOX for 19 photos
+   ───────────────────────────────────────────── */
+let lightboxPhotos = []; // will be filled from DOM
+let currentIndex   = 0;
+
+function buildPhotoList() {
+  // Collect all .m-cell elements that have a data-index
+  const cells = document.querySelectorAll('.m-cell[data-index]');
+  lightboxPhotos = [];
+
+  cells.forEach(cell => {
+    const img = cell.querySelector('img');
+    if (!img) return;
+    lightboxPhotos.push({
+      src:     img.src,
+      alt:     img.alt,
+      caption: cell.dataset.caption || ''
+    });
+  });
+}
+
+function openLightbox(index) {
+  currentIndex = index;
+  showPhoto(currentIndex);
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden'; // prevent scroll behind lightbox
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function showPhoto(index) {
+  if (index < 0) index = lightboxPhotos.length - 1;
+  if (index >= lightboxPhotos.length) index = 0;
+  currentIndex = index;
+
+  const photo  = lightboxPhotos[index];
+  const img    = document.getElementById('lbImg');
+  const counter = document.getElementById('lbCounter');
+
+  // Fade out, swap, fade in
+  img.style.opacity = '0';
+  setTimeout(() => {
+    img.src          = photo.src;
+    img.alt          = photo.alt;
+    img.style.opacity = '1';
+  }, 150);
+
+  counter.textContent = `${index + 1} of ${lightboxPhotos.length}`;
+}
+
+function setupLightbox() {
+  buildPhotoList();
+
+  // Click each photo cell to open lightbox
+  document.querySelectorAll('.m-cell[data-index]').forEach(cell => {
+    cell.addEventListener('click', () => {
+      openLightbox(parseInt(cell.dataset.index));
+    });
+  });
+
+  // Controls
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbPrev').addEventListener('click', () => showPhoto(currentIndex - 1));
+  document.getElementById('lbNext').addEventListener('click', () => showPhoto(currentIndex + 1));
+
+  // Click backdrop to close
+  document.getElementById('lightbox').addEventListener('click', (e) => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const lb = document.getElementById('lightbox');
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'ArrowLeft')  showPhoto(currentIndex - 1);
+    if (e.key === 'ArrowRight') showPhoto(currentIndex + 1);
+    if (e.key === 'Escape')     closeLightbox();
+  });
+
+  // Touch/swipe support for mobile
+  let touchStartX = 0;
+  const lbEl = document.getElementById('lightbox');
+  lbEl.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  lbEl.addEventListener('touchend',   (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      diff > 0 ? showPhoto(currentIndex + 1) : showPhoto(currentIndex - 1);
+    }
+  });
+}
+
+
+/* ─────────────────────────────────────────────
+   3. HEART RAIN
    ───────────────────────────────────────────── */
 function createHeartRain() {
   const container = document.getElementById('heart-rain');
   if (!container) return;
 
-  const hearts    = ['♥', '❤', '♡', '💕', '💗'];
-  const totalHearts = 38;   // how many hearts fall
-  const rainDuration = 4200; // ms — how long the effect lasts
+  const hearts      = ['♥', '❤', '♡', '💕', '💗', '💖'];
+  const total       = 42;
+  const rainEnd     = 4500;
 
-  for (let i = 0; i < totalHearts; i++) {
-    const delay = Math.random() * rainDuration * 0.85; // stagger start times
-
+  for (let i = 0; i < total; i++) {
+    const delay = Math.random() * rainEnd * 0.85;
     setTimeout(() => {
-      const heart = document.createElement('span');
-      heart.classList.add('heart-drop');
-      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      const el       = document.createElement('span');
+      el.classList.add('heart-drop');
+      el.textContent  = hearts[Math.floor(Math.random() * hearts.length)];
 
-      // Random position, size, speed
-      const xPos     = Math.random() * 100;    // % from left
-      const size     = 14 + Math.random() * 18; // px
-      const duration = 2.8 + Math.random() * 2.4; // seconds to fall
+      const size     = 13 + Math.random() * 20;
+      const duration = 2.6 + Math.random() * 2.6;
+      const xPos     = Math.random() * 100;
 
-      heart.style.cssText = `
+      el.style.cssText = `
         left: ${xPos}%;
         font-size: ${size}px;
+        color: hsl(${10 + Math.random() * 15}, 70%, ${55 + Math.random() * 15}%);
         animation-duration: ${duration}s;
-        animation-delay: 0s;
-        opacity: 0;
       `;
-
-      container.appendChild(heart);
-
-      // Remove heart from DOM after it finishes falling
-      setTimeout(() => {
-        heart.remove();
-      }, (duration + 0.5) * 1000);
-
+      container.appendChild(el);
+      setTimeout(() => el.remove(), (duration + 0.5) * 1000);
     }, delay);
   }
 
-  // Fully stop the rain container after everything is done
-  setTimeout(() => {
-    container.style.display = 'none';
-  }, rainDuration + 4000);
+  setTimeout(() => { container.style.display = 'none'; }, rainEnd + 4500);
 }
 
 
 /* ─────────────────────────────────────────────
-   3. LETTER REVEAL TOGGLE
+   4. LETTER REVEAL
    ───────────────────────────────────────────── */
 function toggleLetter(id) {
-  const card = document.getElementById(id);
+  const card   = document.getElementById(id);
   if (!card) return;
-
   const isOpen = card.classList.contains('open');
-
-  // Close all other letters first
-  document.querySelectorAll('.letter-card').forEach(c => {
-    c.classList.remove('open');
-  });
-
-  // Toggle the clicked one
-  if (!isOpen) {
-    card.classList.add('open');
-  }
+  document.querySelectorAll('.letter-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
 }
 
 
 /* ─────────────────────────────────────────────
-   4. BACKGROUND MUSIC TOGGLE
+   5. MUSIC
    ───────────────────────────────────────────── */
 function setupMusic() {
   const btn   = document.getElementById('musicBtn');
   const audio = document.getElementById('bgMusic');
   const icon  = document.getElementById('musicIcon');
-
   if (!btn || !audio) return;
 
-  // Set initial volume low so it's gentle
-  audio.volume = 0.25;
-
+  audio.volume  = 0.22;
   let isPlaying = false;
 
   btn.addEventListener('click', () => {
@@ -128,16 +191,11 @@ function setupMusic() {
       audio.pause();
       icon.textContent = '♪';
       btn.classList.remove('playing');
-      btn.title = 'Play music';
     } else {
       audio.play().then(() => {
         icon.textContent = '♫';
         btn.classList.add('playing');
-        btn.title = 'Pause music';
-      }).catch(() => {
-        // If browser blocks autoplay, show a friendly note
-        console.log('Music ready — click the ♪ button to play');
-      });
+      }).catch(() => {});
     }
     isPlaying = !isPlaying;
   });
@@ -145,19 +203,15 @@ function setupMusic() {
 
 
 /* ─────────────────────────────────────────────
-   5. MOBILE NAV TOGGLE
+   6. MOBILE NAV
    ───────────────────────────────────────────── */
 function setupMobileNav() {
   const toggle = document.getElementById('navToggle');
   const links  = document.getElementById('navLinks');
   if (!toggle || !links) return;
-
-  toggle.addEventListener('click', () => {
-    links.classList.toggle('open');
-  });
+  toggle.addEventListener('click', () => links.classList.toggle('open'));
 }
 
-// Called by onclick on each nav link (closes menu after tap)
 function closeMenu() {
   const links = document.getElementById('navLinks');
   if (links) links.classList.remove('open');
@@ -165,42 +219,38 @@ function closeMenu() {
 
 
 /* ─────────────────────────────────────────────
-   6. SCROLL FADE-IN for sections
-   Sections gently appear as you scroll down
+   7. SCROLL FADE-IN
    ───────────────────────────────────────────── */
 function setupScrollFade() {
-  const sections = document.querySelectorAll(
+  const targets = document.querySelectorAll(
     '.chapters, .timeline-section, .gallery-section, .letters-section'
   );
-
-  // Add initial invisible state
-  sections.forEach(s => {
-    s.style.opacity = '0';
-    s.style.transform = 'translateY(22px)';
-    s.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+  targets.forEach(el => {
+    el.style.opacity   = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.75s ease, transform 0.75s ease';
   });
-
-  const observer = new IntersectionObserver((entries) => {
+  const obs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
+        entry.target.style.opacity   = '1';
         entry.target.style.transform = 'translateY(0)';
-        observer.unobserve(entry.target); // animate only once
+        obs.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.08 });
-
-  sections.forEach(s => observer.observe(s));
+  }, { threshold: 0.07 });
+  targets.forEach(el => obs.observe(el));
 }
 
 
 /* ─────────────────────────────────────────────
-   INIT — run everything when page loads
+   INIT
    ───────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  createHeartRain();    // falling hearts effect
-  updateDaysCounter();  // animated day counter
-  setupMusic();         // music button
-  setupMobileNav();     // hamburger menu
-  setupScrollFade();    // scroll reveal
+  createHeartRain();
+  updateDaysCounter();
+  setupLightbox();
+  setupMusic();
+  setupMobileNav();
+  setupScrollFade();
 });

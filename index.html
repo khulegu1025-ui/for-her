@@ -3,37 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khulegu & Inga</title>
+  <title>Khulegu & Egshiglen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ═══ HEART RAIN (loads on page open) ═══ -->
+  <!-- ═══ HEART RAIN ═══ -->
   <div id="heart-rain" aria-hidden="true"></div>
 
-  <!-- ═══ FLOATING MUSIC BUTTON ═══ -->
+  <!-- ═══ LIGHTBOX ═══ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+    <button class="lb-prev"  id="lbPrev"  aria-label="Previous">‹</button>
+    <button class="lb-next"  id="lbNext"  aria-label="Next">›</button>
+    <div class="lb-img-wrap">
+      <img class="lb-img" id="lbImg" src="" alt="" />
+    </div>
+    <p class="lb-counter" id="lbCounter"></p>
+  </div>
+
+  <!-- ═══ MUSIC BUTTON ═══ -->
   <button class="music-btn" id="musicBtn" title="Toggle music" aria-label="Toggle background music">
     <span id="musicIcon">♪</span>
   </button>
-  <!-- 
-    ADD YOUR SONG: put your mp3 file inside a folder called "music/"
-    and rename it to "song.mp3" — example: music/song.mp3
-  -->
   <audio id="bgMusic" loop>
-    <source src="music/song.mp3" type="audio/mpeg" />
+    <source src="song.mp3" type="audio/mpeg" />
   </audio>
 
   <!-- ═══ NAVIGATION ═══ -->
   <nav class="nav" id="mainNav">
-    <div class="nav-logo">K & I</div>
-
-    <!-- Mobile hamburger button -->
+    <div class="nav-logo">K & E</div>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
-
     <ul class="nav-links" id="navLinks">
       <li><a href="#story"    onclick="closeMenu()">Our Story</a></li>
       <li><a href="#timeline" onclick="closeMenu()">Timeline</a></li>
@@ -45,13 +49,9 @@
   <!-- ═══ HERO ═══ -->
   <section class="hero">
     <p class="eyebrow">A love story</p>
-    <h1 class="hero-title">
-      Khulegu <span class="ampersand">&amp;</span> Inga
-    </h1>
-    <p class="hero-sub">Egshiglen</p>
+    <h1 class="hero-title">Khulegu <span class="ampersand">&amp;</span> Egshiglen</h1>
+    <p class="hero-sub">Inga</p>
     <div class="hero-badge">Since October 16</div>
-
-    <!-- DAYS COUNTER -->
     <div class="counter-wrap">
       <div class="counter-num" id="daysCount">—</div>
       <div class="counter-label">days together</div>
@@ -81,77 +81,161 @@
   <section class="timeline-section" id="timeline">
     <p class="section-label">Our Timeline</p>
     <div class="timeline">
-
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-content">
           <span class="tl-tag">September 19</span>
-          <p class="tl-text">
-            Write your first meeting story here — how you two crossed paths for the first time...
-          </p>
+          <p class="tl-text">I don't think I fully understood what was happening the moment I first saw you — September 19, just an ordinary day that somehow became the beginning of everything.
+I was just a first-year student trying to figure out where I belonged, and then there was you — a graduate student, someone who already knew so much about the world, about life. I remember thinking: why would someone like her ever notice someone like me? But you did. And that still feels like the most beautiful accident.</p>
         </div>
       </div>
-
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-content">
           <span class="tl-tag">October 16</span>
-          <p class="tl-text">
-            The day everything became official — write what made this day so special...
-          </p>
+          <p class="tl-text">October 16 is the day I want to remember forever. The day I stopped wondering and started knowing — that you were someone I wanted to walk beside, for as long as you'd let me.
+Every day since then has felt like something I don't deserve but am endlessly grateful for. You make ordinary moments feel worth keeping. That's why I built this — because some things are too important to only live inside a memory.
+These photos, these words, this little corner of the internet — it's all just my way of saying: I see you. I cherish you. And I don't want to forget a single day of this.</p>
         </div>
       </div>
-
       <div class="tl-item">
         <div class="tl-dot tl-dot--faded"></div>
         <div class="tl-content">
           <span class="tl-tag">Still writing...</span>
-          <p class="tl-text">
-            Every chapter after — growing, laughing, and everything in between.
-          </p>
+          <p class="tl-text">We are two introverted people who somehow became each other's most comfortable place. I don't know how it happened — one day I looked up and realized I was laughing louder, talking more, being someone I didn't know I could be. She did that. Without even trying.
+We crossed borders for each other. Went back to Mongolia, had our dates there, came back together — like we were already practicing what a life side by side could feel like. Most nights I'm not in my dorm. I'm where she is. And that feels more like home than anywhere else.
+My mom still doesn't know why I won't stop smiling and going out so much, keeping me busy.</p>
         </div>
       </div>
-
     </div>
   </section>
 
-  <!-- ═══ GALLERY ═══ -->
+  <!-- ═══════════════════════════════════════
+       GALLERY — 19 PHOTOS
+       ═══════════════════════════════════════
+    HOW TO USE:
+    1. Make a folder called "photos" in your project
+    2. Name your files: photo1.jpg, photo2.jpg … photo19.jpg
+    3. Edit the data-caption="" text to describe each moment
+    4. Put your best/favourite photo as photo1.jpg (it's the big hero)
+  ════════════════════════════════════════════ -->
   <section class="gallery-section" id="gallery">
     <p class="section-label">Moments</p>
-    <div class="gallery-grid">
-      <!--
-        HOW TO ADD YOUR PHOTOS:
-        1. Create a folder called "photos" inside your project
-        2. Put your image files in there (jpg, png, webp)
-        3. Replace "photos/photo1.jpg" with your actual filenames
+    <p class="gallery-subtitle">19 moments, one story — click any photo</p>
 
-        Example: if you have a file called "us_october.jpg" in the photos folder,
-        write: src="photos/us_october.jpg"
-      -->
-      <div class="gallery-img featured" style="background:#f0e6de">
-        <img src="photos/photo1.jpg" alt="Us together" onerror="this.parentElement.classList.add('placeholder')" />
-        <span class="placeholder-text">Add photos/photo1.jpg</span>
+    <div class="mosaic">
+
+      <!-- ── BLOCK 1 · hero left + 2 stacked right ── -->
+      <div class="mosaic-block block-hero-left">
+        <div class="m-cell m-hero" data-index="0" data-caption="Our very first moment together">
+          <img src="photos/photo19.jpg" alt="Photo 1" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-stack">
+          <div class="m-cell" data-index="1" data-caption="">
+            <img src="photos/photo2.jpg" alt="Photo 2" loading="lazy" />
+            <div class="m-overlay">♥</div>
+          </div>
+          <div class="m-cell" data-index="2" data-caption="">
+            <img src="photos/photo13.jpg" alt="Photo 3" loading="lazy" />
+            <div class="m-overlay">♥</div>
+          </div>
+        </div>
       </div>
-      <div class="gallery-img" style="background:#ede0d6">
-        <img src="photos/photo2.jpg" alt="A moment" onerror="this.parentElement.classList.add('placeholder')" />
-        <span class="placeholder-text">Add photos/photo2.jpg</span>
+
+      <!-- ── BLOCK 2 · 3 equal columns ── -->
+      <div class="mosaic-block block-thirds">
+        <div class="m-cell" data-index="3" data-caption="">
+          <img src="photos/photo4.jpg" alt="Photo 4" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="4" data-caption="">
+          <img src="photos/photo5.jpg" alt="Photo 5" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="5" data-caption="">
+          <img src="photos/photo6.jpg" alt="Photo 6" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
       </div>
-      <div class="gallery-img" style="background:#e8d8cc">
-        <img src="photos/photo3.jpg" alt="A moment" onerror="this.parentElement.classList.add('placeholder')" />
-        <span class="placeholder-text">Add photos/photo3.jpg</span>
+
+      <!-- ── BLOCK 3 · 2 stacked left + hero right ── -->
+      <div class="mosaic-block block-hero-right">
+        <div class="m-stack">
+          <div class="m-cell" data-index="6" data-caption="">
+            <img src="photos/photo7.jpg" alt="Photo 7" loading="lazy" />
+            <div class="m-overlay">♥</div>
+          </div>
+          <div class="m-cell" data-index="7" data-caption="">
+            <img src="photos/photo8.jpg" alt="Photo 8" loading="lazy" />
+            <div class="m-overlay">♥</div>
+          </div>
+        </div>
+        <div class="m-cell m-hero" data-index="8" data-caption="">
+          <img src="photos/photo9.jpg" alt="Photo 9" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
       </div>
-      <div class="gallery-img" style="background:#f3e8e0">
-        <img src="photos/photo4.jpg" alt="A moment" onerror="this.parentElement.classList.add('placeholder')" />
-        <span class="placeholder-text">Add photos/photo4.jpg</span>
+
+      <!-- ── BLOCK 4 · 4 small squares ── -->
+      <div class="mosaic-block block-quads">
+        <div class="m-cell" data-index="9" data-caption="">
+          <img src="photos/photo10.jpg" alt="Photo 10" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="10" data-caption="">
+          <img src="photos/photo11.jpg" alt="Photo 11" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="11" data-caption="">
+          <img src="photos/photo12.jpg" alt="Photo 12" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="12" data-caption="">
+          <img src="photos/photo3.jpg" alt="Photo 13" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
       </div>
-    </div>
+
+      <!-- ── BLOCK 5 · wide panoramic + tall ── -->
+      <div class="mosaic-block block-pano">
+        <div class="m-cell m-pano" data-index="13" data-caption="">
+          <img src="photos/photo14.jpg" alt="Photo 14" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="14" data-caption="">
+          <img src="photos/photo15.jpg" alt="Photo 15" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+      </div>
+
+      <!-- ── BLOCK 6 · final 4 equal ── -->
+      <div class="mosaic-block block-quads">
+        <div class="m-cell" data-index="15" data-caption="">
+          <img src="photos/photo16.jpg" alt="Photo 16" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="16" data-caption="">
+          <img src="photos/photo17.jpg" alt="Photo 17" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="17" data-caption="">
+          <img src="photos/photo18.jpg" alt="Photo 18" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+        <div class="m-cell" data-index="18" data-caption="">
+          <img src="photos/photo1.jpg" alt="Photo 19" loading="lazy" />
+          <div class="m-overlay">♥</div>
+        </div>
+      </div>
+
+    </div><!-- .mosaic -->
   </section>
 
   <!-- ═══ LETTERS ═══ -->
   <section class="letters-section" id="letters">
     <p class="section-label">Letters</p>
 
-    <!-- LETTER 1 -->
     <div class="letter-card" id="letter1">
       <div class="letter-header" onclick="toggleLetter('letter1')">
         <div class="letter-meta">
@@ -162,21 +246,12 @@
       </div>
       <div class="letter-body">
         <div class="letter-inner">
-          <!--
-            WRITE YOUR LETTER HERE — replace this text with your actual words
-            You can use <br/> for line breaks and <em> for italic text
-          -->
-          <p class="letter-text">
-            "Write your letter here — every word you've always wanted to say,
-            now finally on paper (and on a website). Let her read it whenever
-            she needs to remember how much she means to you..."
-          </p>
+          <p class="letter-text">"Write your letter here — every word you've always wanted to say, now finally on paper (and on a website)..."</p>
           <p class="letter-signature">— Khulegu</p>
         </div>
       </div>
     </div>
 
-    <!-- LETTER 2 -->
     <div class="letter-card" id="letter2">
       <div class="letter-header" onclick="toggleLetter('letter2')">
         <div class="letter-meta">
@@ -187,9 +262,7 @@
       </div>
       <div class="letter-body">
         <div class="letter-inner">
-          <p class="letter-text">
-            "Inga's letter goes here — her words to you, preserved forever..."
-          </p>
+          <p class="letter-text">"Inga's letter goes here — her words to you, preserved forever..."</p>
           <p class="letter-signature">— Inga</p>
         </div>
       </div>
