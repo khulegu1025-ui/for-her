@@ -13,7 +13,7 @@
   <!-- ═══ HEART RAIN ═══ -->
   <div id="heart-rain" aria-hidden="true"></div>
 
-  <!-- ═══ LIGHTBOX ═══ -->
+  <!-- ═══ LIGHTBOX (shared across both galleries) ═══ -->
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
     <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
     <button class="lb-prev"  id="lbPrev"  aria-label="Previous">‹</button>
@@ -24,12 +24,48 @@
     <p class="lb-counter" id="lbCounter"></p>
   </div>
 
-  <!-- ═══ MUSIC BUTTON ═══ -->
-  <button class="music-btn" id="musicBtn" title="Toggle music" aria-label="Toggle background music">
-    <span id="musicIcon">♪</span>
-  </button>
+  <!-- ═══════════════════════════════════════════════
+       CD PLAYER (replaces old music button)
+       ─────────────────────────────────────────────
+       Put your two songs in the same folder as index.html:
+         song.mp3   ← first song
+         song2.mp3  ← second song
+       Click ♪ button to play / pause.
+       Click the spinning CD to skip to next song.
+  ═══════════════════════════════════════════════════ -->
+  <div class="player-wrap" id="playerWrap">
+
+    <!-- The vinyl CD disc — pops up when music plays -->
+    <div class="cd-pop" id="cdPop">
+      <div class="cd-disc" id="cdDisc" title="Click to skip song">
+        <!-- decorative groove rings via CSS -->
+        <div class="cd-grooves"></div>
+        <!-- sheen shimmer layer -->
+        <div class="cd-sheen"></div>
+        <!-- center label -->
+        <div class="cd-label">
+          <span class="cd-label-text">K &amp; I</span>
+        </div>
+        <!-- center hole -->
+        <div class="cd-hole"></div>
+      </div>
+      <!-- song name shows above CD -->
+      <p class="cd-song-name" id="cdSongName">♪</p>
+    </div>
+
+    <!-- The play/pause button at the bottom -->
+    <button class="music-btn" id="musicBtn" title="Play / Pause music" aria-label="Toggle background music">
+      <span id="musicIcon">♪</span>
+    </button>
+
+  </div>
+
+  <!-- audio elements -->
   <audio id="bgMusic" loop>
     <source src="song.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="bgMusic2" loop>
+    <source src="song2.mp3" type="audio/mpeg" />
   </audio>
 
   <!-- ═══ NAVIGATION ═══ -->
@@ -110,15 +146,9 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════
-       GALLERY — 19 PHOTOS
-       ═══════════════════════════════════════
-    HOW TO USE:
-    1. Make a folder called "photos" in your project
-    2. Name your files: photo1.jpg, photo2.jpg … photo19.jpg
-    3. Edit the data-caption="" text to describe each moment
-    4. Put your best/favourite photo as photo1.jpg (it's the big hero)
-  ════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════
+       GALLERY — FIRST 19 PHOTOS (mosaic)
+  ════════════════════════════════════════════════ -->
   <section class="gallery-section" id="gallery">
     <p class="section-label">Moments</p>
     <p class="gallery-subtitle">19 moments, one story — click any photo</p>
@@ -230,6 +260,172 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
       </div>
 
     </div><!-- .mosaic -->
+
+
+    <!-- ════════════════════════════════════════════
+         POLAROID WALL — next 20 photos
+         ─────────────────────────────────────────
+         Name your files: photo20.jpg … photo39.jpg
+         Edit data-caption="" for each polaroid.
+         JS will randomise the tilt automatically.
+    ═════════════════════════════════════════════════ -->
+    <div class="polaroid-divider">
+      <div class="pd-line"></div>
+      <div class="pd-label">
+        <span class="pd-heart">♥</span>
+        <span class="pd-text">More of us</span>
+        <span class="pd-heart">♥</span>
+      </div>
+      <div class="pd-line"></div>
+    </div>
+
+    <p class="polaroid-hint">scroll through our favourites</p>
+
+    <div class="polaroid-wall" id="polaroidWall">
+
+      <!-- photo20 → index 19 in lightbox -->
+      <div class="polaroid" data-index="19">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo20.jpg" alt="Photo 20" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="20">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo21.jpg" alt="Photo 21" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="21">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo22.jpg" alt="Photo 22" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="22">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo23.jpg" alt="Photo 23" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="23">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo24.jpg" alt="Photo 24" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="24">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo25.jpg" alt="Photo 25" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="25">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo26.jpg" alt="Photo 26" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="26">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo27.jpg" alt="Photo 27" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="27">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo28.jpg" alt="Photo 28" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="28">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo29.jpg" alt="Photo 29" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="29">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo30.jpg" alt="Photo 30" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="30">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo31.jpg" alt="Photo 31" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="31">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo32.jpg" alt="Photo 32" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="32">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo33.jpg" alt="Photo 33" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="33">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo34.jpg" alt="Photo 34" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="34">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo35.jpg" alt="Photo 35" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="35">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo36.jpg" alt="Photo 36" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="36">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo37.jpg" alt="Photo 37" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="37">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo38.jpg" alt="Photo 38" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+      <div class="polaroid" data-index="38">
+        <div class="polaroid-img-wrap">
+          <img src="photos/photo39.jpg" alt="Photo 39" loading="lazy" />
+        </div>
+        <p class="polaroid-caption" data-caption=""></p>
+      </div>
+
+    </div><!-- .polaroid-wall -->
+
   </section>
 
   <!-- ═══ LETTERS ═══ -->

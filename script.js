@@ -7,7 +7,6 @@
    1. DAYS COUNTER
    ───────────────────────────────────────────── */
 function updateDaysCounter() {
-  // Change 2024 to 2025 if your start year is 2025
   const startDate = new Date('2025-10-16T00:00:00');
   const today     = new Date();
   const msPerDay  = 1000 * 60 * 60 * 24;
@@ -16,8 +15,8 @@ function updateDaysCounter() {
   const el = document.getElementById('daysCount');
   if (!el) return;
 
-  let current  = 0;
-  const steps    = Math.min(days, 80);
+  let current     = 0;
+  const steps     = Math.min(days, 80);
   const increment = days / steps;
   const interval  = 1800 / steps;
 
@@ -30,32 +29,46 @@ function updateDaysCounter() {
 
 
 /* ─────────────────────────────────────────────
-   2. LIGHTBOX for 19 photos
+   2. LIGHTBOX
+   Handles both mosaic (.m-cell) and polaroid (.polaroid)
    ───────────────────────────────────────────── */
-let lightboxPhotos = []; // will be filled from DOM
+let lightboxPhotos = [];
 let currentIndex   = 0;
 
 function buildPhotoList() {
-  // Collect all .m-cell elements that have a data-index
-  const cells = document.querySelectorAll('.m-cell[data-index]');
   lightboxPhotos = [];
 
-  cells.forEach(cell => {
+  // --- First 19: mosaic cells ---
+  document.querySelectorAll('.m-cell[data-index]').forEach(cell => {
     const img = cell.querySelector('img');
     if (!img) return;
-    lightboxPhotos.push({
+    lightboxPhotos[parseInt(cell.dataset.index)] = {
       src:     img.src,
       alt:     img.alt,
       caption: cell.dataset.caption || ''
-    });
+    };
   });
+
+  // --- Next 20: polaroid cells (indices 19–38) ---
+  document.querySelectorAll('.polaroid[data-index]').forEach(cell => {
+    const img = cell.querySelector('img');
+    if (!img) return;
+    lightboxPhotos[parseInt(cell.dataset.index)] = {
+      src:     img.src,
+      alt:     img.alt,
+      caption: cell.querySelector('.polaroid-caption')?.textContent || ''
+    };
+  });
+
+  // remove any gaps (undefined slots)
+  lightboxPhotos = lightboxPhotos.filter(Boolean);
 }
 
 function openLightbox(index) {
   currentIndex = index;
   showPhoto(currentIndex);
   document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden'; // prevent scroll behind lightbox
+  document.body.style.overflow = 'hidden';
 }
 
 function closeLightbox() {
@@ -68,15 +81,14 @@ function showPhoto(index) {
   if (index >= lightboxPhotos.length) index = 0;
   currentIndex = index;
 
-  const photo  = lightboxPhotos[index];
-  const img    = document.getElementById('lbImg');
+  const photo   = lightboxPhotos[index];
+  const img     = document.getElementById('lbImg');
   const counter = document.getElementById('lbCounter');
 
-  // Fade out, swap, fade in
   img.style.opacity = '0';
   setTimeout(() => {
-    img.src          = photo.src;
-    img.alt          = photo.alt;
+    img.src           = photo.src;
+    img.alt           = photo.alt;
     img.style.opacity = '1';
   }, 150);
 
@@ -86,33 +98,32 @@ function showPhoto(index) {
 function setupLightbox() {
   buildPhotoList();
 
-  // Click each photo cell to open lightbox
+  // mosaic cells
   document.querySelectorAll('.m-cell[data-index]').forEach(cell => {
-    cell.addEventListener('click', () => {
-      openLightbox(parseInt(cell.dataset.index));
-    });
+    cell.addEventListener('click', () => openLightbox(parseInt(cell.dataset.index)));
   });
 
-  // Controls
+  // polaroid cells
+  document.querySelectorAll('.polaroid[data-index]').forEach(cell => {
+    cell.addEventListener('click', () => openLightbox(parseInt(cell.dataset.index)));
+  });
+
   document.getElementById('lbClose').addEventListener('click', closeLightbox);
   document.getElementById('lbPrev').addEventListener('click', () => showPhoto(currentIndex - 1));
   document.getElementById('lbNext').addEventListener('click', () => showPhoto(currentIndex + 1));
 
-  // Click backdrop to close
   document.getElementById('lightbox').addEventListener('click', (e) => {
     if (e.target.id === 'lightbox') closeLightbox();
   });
 
-  // Keyboard navigation
   document.addEventListener('keydown', (e) => {
-    const lb = document.getElementById('lightbox');
-    if (!lb.classList.contains('open')) return;
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
     if (e.key === 'ArrowLeft')  showPhoto(currentIndex - 1);
     if (e.key === 'ArrowRight') showPhoto(currentIndex + 1);
     if (e.key === 'Escape')     closeLightbox();
   });
 
-  // Touch/swipe support for mobile
+  // swipe on mobile
   let touchStartX = 0;
   const lbEl = document.getElementById('lightbox');
   lbEl.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
@@ -132,16 +143,16 @@ function createHeartRain() {
   const container = document.getElementById('heart-rain');
   if (!container) return;
 
-  const hearts      = ['♥', '❤', '♡', '💕', '💗', '💖'];
-  const total       = 42;
-  const rainEnd     = 4500;
+  const hearts  = ['♥', '❤', '♡', '💕', '💗', '💖'];
+  const total   = 42;
+  const rainEnd = 4500;
 
   for (let i = 0; i < total; i++) {
     const delay = Math.random() * rainEnd * 0.85;
     setTimeout(() => {
-      const el       = document.createElement('span');
+      const el      = document.createElement('span');
       el.classList.add('heart-drop');
-      el.textContent  = hearts[Math.floor(Math.random() * hearts.length)];
+      el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
 
       const size     = 13 + Math.random() * 20;
       const duration = 2.6 + Math.random() * 2.6;
@@ -175,35 +186,177 @@ function toggleLetter(id) {
 
 
 /* ─────────────────────────────────────────────
-   5. MUSIC
-   ───────────────────────────────────────────── */
-function setupMusic() {
-  const btn   = document.getElementById('musicBtn');
-  const audio = document.getElementById('bgMusic');
-  const icon  = document.getElementById('musicIcon');
-  if (!btn || !audio) return;
+   5. CD PLAYER — two songs, spinning disc
+   ─────────────────────────────────────────────
+   Files needed in your project folder:
+     song.mp3   ← song 1
+     song2.mp3  ← song 2
+   ─────────────────────────────────────────────*/
+function setupCDPlayer() {
+  const btn      = document.getElementById('musicBtn');
+  const icon     = document.getElementById('musicIcon');
+  const cdPop    = document.getElementById('cdPop');
+  const cdDisc   = document.getElementById('cdDisc');
+  const songName = document.getElementById('cdSongName');
 
-  audio.volume  = 0.22;
-  let isPlaying = false;
+  const audios = [
+    document.getElementById('bgMusic'),   // song.mp3
+    document.getElementById('bgMusic2')   // song2.mp3
+  ];
 
+  // Give your songs nice display names here:
+  const songNames = ['Song 1', 'Song 2'];
+
+  let isPlaying    = false;
+  let currentSong  = 0;   // 0 or 1
+
+  // set volume low for both
+  audios.forEach(a => { if (a) a.volume = 0.22; });
+
+  function getAudio(i) { return audios[i]; }
+  function getCurrentAudio() { return getAudio(currentSong); }
+
+  function startPlaying() {
+    getCurrentAudio().play().then(() => {
+      isPlaying = true;
+      icon.textContent = '‖';          // pause icon on button
+      cdDisc.classList.add('spinning'); // spin the CD
+      cdPop.classList.add('visible');   // pop up the CD
+      songName.textContent = songNames[currentSong];
+    }).catch(() => {
+      // browser blocked autoplay — user still hears nothing but UI resets
+      icon.textContent = '♪';
+    });
+  }
+
+  function stopPlaying() {
+    getCurrentAudio().pause();
+    getCurrentAudio().currentTime = 0;
+    isPlaying = false;
+    icon.textContent = '♪';
+    cdDisc.classList.remove('spinning');
+    cdPop.classList.remove('visible');   // slide CD back down
+  }
+
+  // ── Play / Pause button ──
   btn.addEventListener('click', () => {
     if (isPlaying) {
-      audio.pause();
-      icon.textContent = '♪';
-      btn.classList.remove('playing');
+      stopPlaying();
     } else {
-      audio.play().then(() => {
-        icon.textContent = '♫';
-        btn.classList.add('playing');
-      }).catch(() => {});
+      startPlaying();
     }
-    isPlaying = !isPlaying;
+  });
+
+  // ── Click the CD disc → skip to next song ──
+  cdDisc.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    // fade out current
+    getCurrentAudio().pause();
+    getCurrentAudio().currentTime = 0;
+
+    // switch song
+    currentSong = (currentSong + 1) % audios.length;
+
+    // quick visual flash on disc
+    cdDisc.style.opacity = '0.4';
+    setTimeout(() => { cdDisc.style.opacity = '1'; }, 180);
+
+    // play new song
+    if (isPlaying) {
+      getCurrentAudio().play().then(() => {
+        songName.textContent = songNames[currentSong];
+      }).catch(() => {});
+    } else {
+      songName.textContent = songNames[currentSong];
+    }
+  });
+
+  // when a song ends naturally, auto-advance to next
+  audios.forEach((audio, i) => {
+    if (!audio) return;
+    audio.addEventListener('ended', () => {
+      audio.currentTime = 0;
+      currentSong = (i + 1) % audios.length;
+      getCurrentAudio().play().then(() => {
+        songName.textContent = songNames[currentSong];
+      }).catch(() => {});
+    });
   });
 }
 
 
 /* ─────────────────────────────────────────────
-   6. MOBILE NAV
+   6. POLAROID WALL — scroll reveal + tilt
+   ───────────────────────────────────────────── */
+function setupPolaroids() {
+  const polaroids = document.querySelectorAll('.polaroid');
+  if (!polaroids.length) return;
+
+  // direction presets for fly-in animation
+  const flyDirections = [
+    'translateX(-60px) translateY(30px)',   // from left
+    'translateX(60px)  translateY(30px)',   // from right
+    'translateX(-40px) translateY(60px)',   // from bottom-left
+    'translateX(40px)  translateY(60px)',   // from bottom-right
+    'translateX(0px)   translateY(70px)',   // from below
+  ];
+
+  polaroids.forEach((p, i) => {
+    // random tilt between -5.5 and +5.5 degrees
+    const tilt   = (Math.random() * 11 - 5.5).toFixed(2);
+    const flyDir = flyDirections[i % flyDirections.length];
+
+    // store final tilt as CSS var
+    p.style.setProperty('--tilt', `${tilt}deg`);
+
+    // start in fly-in position
+    p.style.transform = `${flyDir} rotate(${tilt}deg)`;
+    p.style.opacity   = '0';
+
+    // fill caption from data-caption attribute
+    const cap = p.querySelector('.polaroid-caption');
+    const txt = p.querySelector('.polaroid-caption')?.getAttribute('data-caption') || '';
+    if (cap) cap.textContent = txt;
+  });
+
+  // IntersectionObserver: reveal each polaroid as it enters view, staggered
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      const p     = entry.target;
+      const idx   = Array.from(polaroids).indexOf(p);
+      const tilt  = p.style.getPropertyValue('--tilt');
+      const delay = (idx % 4) * 80; // stagger by column position
+
+      setTimeout(() => {
+        p.style.transition = `transform 0.65s cubic-bezier(0.34, 1.3, 0.64, 1),
+                               opacity 0.5s ease`;
+        p.style.transform  = `rotate(${tilt})`;
+        p.style.opacity    = '1';
+        p.classList.add('revealed');
+      }, delay);
+
+      observer.unobserve(p);
+    });
+  }, { threshold: 0.08 });
+
+  polaroids.forEach(p => observer.observe(p));
+
+  // hover: straighten out (overriding tilt), handled mostly in CSS
+  // but we also set the rotate back on mouse-leave
+  polaroids.forEach(p => {
+    const tilt = p.style.getPropertyValue('--tilt');
+    p.addEventListener('mouseleave', () => {
+      p.style.transform = `rotate(${tilt})`;
+    });
+  });
+}
+
+
+/* ─────────────────────────────────────────────
+   7. MOBILE NAV
    ───────────────────────────────────────────── */
 function setupMobileNav() {
   const toggle = document.getElementById('navToggle');
@@ -219,15 +372,15 @@ function closeMenu() {
 
 
 /* ─────────────────────────────────────────────
-   7. SCROLL FADE-IN
+   8. SCROLL FADE-IN for main sections
    ───────────────────────────────────────────── */
 function setupScrollFade() {
   const targets = document.querySelectorAll(
     '.chapters, .timeline-section, .gallery-section, .letters-section'
   );
   targets.forEach(el => {
-    el.style.opacity   = '0';
-    el.style.transform = 'translateY(24px)';
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(24px)';
     el.style.transition = 'opacity 0.75s ease, transform 0.75s ease';
   });
   const obs = new IntersectionObserver((entries) => {
@@ -250,7 +403,8 @@ document.addEventListener('DOMContentLoaded', () => {
   createHeartRain();
   updateDaysCounter();
   setupLightbox();
-  setupMusic();
+  setupCDPlayer();
+  setupPolaroids();
   setupMobileNav();
   setupScrollFade();
 });
