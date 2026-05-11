@@ -10,10 +10,42 @@
 </head>
 <body>
 
+  <!-- ═══════════════════════════════════════════════════
+       MEMORY FLASH — plays on page load
+       All 39 photos flash like memories before your eyes.
+       JS pulls every img src from the gallery automatically.
+  ════════════════════════════════════════════════════════ -->
+  <div id="memory-flash">
+
+    <!-- two stacked photos for smooth crossfade — JS swaps between them -->
+    <div class="mf-photo-wrap">
+      <img class="mf-photo" id="mfPhotoA" src="" alt="" />
+      <img class="mf-photo" id="mfPhotoB" src="" alt="" />
+    </div>
+
+    <!-- edge glow — pulses from all 4 sides on each photo change -->
+    <div class="mf-edge-glow" id="mfEdgeGlow"></div>
+
+    <!-- film grain texture -->
+    <div class="mf-grain"></div>
+
+    <!-- vignette -->
+    <div class="mf-vignette"></div>
+
+    <!-- final hold text -->
+    <div class="mf-final" id="mfFinal">
+      <p class="mf-final-text">every moment.</p>
+    </div>
+
+    <!-- skip button -->
+    <button class="mf-skip" id="mfSkip">skip ›</button>
+
+  </div>
+
   <!-- ═══ HEART RAIN ═══ -->
   <div id="heart-rain" aria-hidden="true"></div>
 
-  <!-- ═══ LIGHTBOX (shared across both galleries) ═══ -->
+  <!-- ═══ LIGHTBOX ═══ -->
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
     <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
     <button class="lb-prev"  id="lbPrev"  aria-label="Previous">‹</button>
@@ -24,43 +56,24 @@
     <p class="lb-counter" id="lbCounter"></p>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       CD PLAYER (replaces old music button)
-       ─────────────────────────────────────────────
-       Put your two songs in the same folder as index.html:
-         song.mp3   ← first song
-         song2.mp3  ← second song
-       Click ♪ button to play / pause.
-       Click the spinning CD to skip to next song.
-  ═══════════════════════════════════════════════════ -->
+  <!-- ═══ CD PLAYER ═══ -->
   <div class="player-wrap" id="playerWrap">
-
-    <!-- The vinyl CD disc — pops up when music plays -->
     <div class="cd-pop" id="cdPop">
       <div class="cd-disc" id="cdDisc" title="Click to skip song">
-        <!-- decorative groove rings via CSS -->
         <div class="cd-grooves"></div>
-        <!-- sheen shimmer layer -->
         <div class="cd-sheen"></div>
-        <!-- center label -->
         <div class="cd-label">
           <span class="cd-label-text">K &amp; I</span>
         </div>
-        <!-- center hole -->
         <div class="cd-hole"></div>
       </div>
-      <!-- song name shows above CD -->
       <p class="cd-song-name" id="cdSongName">♪</p>
     </div>
-
-    <!-- The play/pause button at the bottom -->
     <button class="music-btn" id="musicBtn" title="Play / Pause music" aria-label="Toggle background music">
       <span id="musicIcon">♪</span>
     </button>
-
   </div>
 
-  <!-- audio elements -->
   <audio id="bgMusic" loop>
     <source src="song.mp3" type="audio/mpeg" />
   </audio>
@@ -89,8 +102,28 @@
     <p class="hero-sub">Inga</p>
     <div class="hero-badge">Since October 16</div>
     <div class="counter-wrap">
-      <div class="counter-num" id="daysCount">—</div>
-      <div class="counter-label">days together</div>
+      <div class="counter-units" id="counterUnits">
+
+        <!-- year — hidden by JS until 1 full year has passed -->
+        <div class="counter-unit" id="unitYear" style="display:none">
+          <span class="c-num" id="countYear">0</span>
+          <span class="c-label">year</span>
+        </div>
+        <div class="counter-sep" id="sepYear" style="display:none">·</div>
+
+        <div class="counter-unit">
+          <span class="c-num" id="countMonth">—</span>
+          <span class="c-label">months</span>
+        </div>
+        <div class="counter-sep">·</div>
+
+        <div class="counter-unit">
+          <span class="c-num" id="countDay">—</span>
+          <span class="c-label">days</span>
+        </div>
+
+      </div>
+      <p class="counter-since">together since October 16</p>
     </div>
   </section>
 
@@ -146,16 +179,13 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════
-       GALLERY — FIRST 19 PHOTOS (mosaic)
-  ════════════════════════════════════════════════ -->
+  <!-- ═══ GALLERY — first 19 mosaic ═══ -->
   <section class="gallery-section" id="gallery">
     <p class="section-label">Moments</p>
     <p class="gallery-subtitle">19 moments, one story — click any photo</p>
 
     <div class="mosaic">
 
-      <!-- ── BLOCK 1 · hero left + 2 stacked right ── -->
       <div class="mosaic-block block-hero-left">
         <div class="m-cell m-hero" data-index="0" data-caption="Our very first moment together">
           <img src="photos/photo19.jpg" alt="Photo 1" loading="lazy" />
@@ -173,7 +203,6 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
         </div>
       </div>
 
-      <!-- ── BLOCK 2 · 3 equal columns ── -->
       <div class="mosaic-block block-thirds">
         <div class="m-cell" data-index="3" data-caption="">
           <img src="photos/photo4.jpg" alt="Photo 4" loading="lazy" />
@@ -189,7 +218,6 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
         </div>
       </div>
 
-      <!-- ── BLOCK 3 · 2 stacked left + hero right ── -->
       <div class="mosaic-block block-hero-right">
         <div class="m-stack">
           <div class="m-cell" data-index="6" data-caption="">
@@ -207,7 +235,6 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
         </div>
       </div>
 
-      <!-- ── BLOCK 4 · 4 small squares ── -->
       <div class="mosaic-block block-quads">
         <div class="m-cell" data-index="9" data-caption="">
           <img src="photos/photo10.jpg" alt="Photo 10" loading="lazy" />
@@ -227,7 +254,6 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
         </div>
       </div>
 
-      <!-- ── BLOCK 5 · wide panoramic + tall ── -->
       <div class="mosaic-block block-pano">
         <div class="m-cell m-pano" data-index="13" data-caption="">
           <img src="photos/photo14.jpg" alt="Photo 14" loading="lazy" />
@@ -239,7 +265,6 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
         </div>
       </div>
 
-      <!-- ── BLOCK 6 · final 4 equal ── -->
       <div class="mosaic-block block-quads">
         <div class="m-cell" data-index="15" data-caption="">
           <img src="photos/photo16.jpg" alt="Photo 16" loading="lazy" />
@@ -259,16 +284,9 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
         </div>
       </div>
 
-    </div><!-- .mosaic -->
+    </div>
 
-
-    <!-- ════════════════════════════════════════════
-         POLAROID WALL — next 20 photos
-         ─────────────────────────────────────────
-         Name your files: photo20.jpg … photo39.jpg
-         Edit data-caption="" for each polaroid.
-         JS will randomise the tilt automatically.
-    ═════════════════════════════════════════════════ -->
+    <!-- POLAROID WALL -->
     <div class="polaroid-divider">
       <div class="pd-line"></div>
       <div class="pd-label">
@@ -282,149 +300,27 @@ My mom still doesn't know why I won't stop smiling and going out so much, keepin
     <p class="polaroid-hint">scroll through our favourites</p>
 
     <div class="polaroid-wall" id="polaroidWall">
-
-      <!-- photo20 → index 19 in lightbox -->
-      <div class="polaroid" data-index="19">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo20.jpg" alt="Photo 20" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="20">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo21.jpg" alt="Photo 21" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="21">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo22.jpg" alt="Photo 22" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="22">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo23.jpg" alt="Photo 23" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="23">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo24.jpg" alt="Photo 24" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="24">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo25.jpg" alt="Photo 25" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="25">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo26.jpg" alt="Photo 26" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="26">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo27.jpg" alt="Photo 27" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="27">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo28.jpg" alt="Photo 28" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="28">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo29.jpg" alt="Photo 29" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="29">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo30.jpg" alt="Photo 30" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="30">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo31.jpg" alt="Photo 31" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="31">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo32.jpg" alt="Photo 32" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="32">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo33.jpg" alt="Photo 33" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="33">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo34.jpg" alt="Photo 34" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="34">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo35.jpg" alt="Photo 35" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="35">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo36.jpg" alt="Photo 36" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="36">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo37.jpg" alt="Photo 37" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="37">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo38.jpg" alt="Photo 38" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-      <div class="polaroid" data-index="38">
-        <div class="polaroid-img-wrap">
-          <img src="photos/photo39.jpg" alt="Photo 39" loading="lazy" />
-        </div>
-        <p class="polaroid-caption" data-caption=""></p>
-      </div>
-
-    </div><!-- .polaroid-wall -->
+      <div class="polaroid" data-index="19"><div class="polaroid-img-wrap"><img src="photos/photo20.jpg" alt="Photo 20" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="20"><div class="polaroid-img-wrap"><img src="photos/photo21.jpg" alt="Photo 21" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="21"><div class="polaroid-img-wrap"><img src="photos/photo22.jpg" alt="Photo 22" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="22"><div class="polaroid-img-wrap"><img src="photos/photo23.jpg" alt="Photo 23" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="23"><div class="polaroid-img-wrap"><img src="photos/photo24.jpg" alt="Photo 24" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="24"><div class="polaroid-img-wrap"><img src="photos/photo25.jpg" alt="Photo 25" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="25"><div class="polaroid-img-wrap"><img src="photos/photo26.jpg" alt="Photo 26" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="26"><div class="polaroid-img-wrap"><img src="photos/photo27.jpg" alt="Photo 27" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="27"><div class="polaroid-img-wrap"><img src="photos/photo28.jpg" alt="Photo 28" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="28"><div class="polaroid-img-wrap"><img src="photos/photo29.jpg" alt="Photo 29" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="29"><div class="polaroid-img-wrap"><img src="photos/photo30.jpg" alt="Photo 30" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="30"><div class="polaroid-img-wrap"><img src="photos/photo31.jpg" alt="Photo 31" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="31"><div class="polaroid-img-wrap"><img src="photos/photo32.jpg" alt="Photo 32" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="32"><div class="polaroid-img-wrap"><img src="photos/photo33.jpg" alt="Photo 33" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="33"><div class="polaroid-img-wrap"><img src="photos/photo34.jpg" alt="Photo 34" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="34"><div class="polaroid-img-wrap"><img src="photos/photo35.jpg" alt="Photo 35" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="35"><div class="polaroid-img-wrap"><img src="photos/photo36.jpg" alt="Photo 36" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="36"><div class="polaroid-img-wrap"><img src="photos/photo37.jpg" alt="Photo 37" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="37"><div class="polaroid-img-wrap"><img src="photos/photo38.jpg" alt="Photo 38" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+      <div class="polaroid" data-index="38"><div class="polaroid-img-wrap"><img src="photos/photo39.jpg" alt="Photo 39" loading="lazy" /></div><p class="polaroid-caption" data-caption=""></p></div>
+    </div>
 
   </section>
 
