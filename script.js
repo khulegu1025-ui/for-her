@@ -4,67 +4,69 @@
 
 
 /* ─────────────────────────────────────────────
-   1. MEMORY FLASH
+   1. MEMORY FLASH — triggered by button click
    ─────────────────────────────────────────────
-   Collects every photo src from both galleries,
-   flashes them like memories before your eyes —
-   slow → fast → slow — then fades out to reveal
-   the website. Heart rain starts after.
+   Images are lazy-loaded, so running this on
+   page load means blank frames. Instead the
+   user clicks the button after scrolling the
+   gallery — by then every photo is in memory.
    ───────────────────────────────────────────── */
-function runMemoryFlash(onComplete) {
+function runMemoryFlash() {
   const overlay  = document.getElementById('memory-flash');
   const photoA   = document.getElementById('mfPhotoA');
   const photoB   = document.getElementById('mfPhotoB');
   const edgeGlow = document.getElementById('mfEdgeGlow');
   const mfFinal  = document.getElementById('mfFinal');
   const skipBtn  = document.getElementById('mfSkip');
+  const trigBtn  = document.getElementById('flashTriggerBtn');
 
-  if (!overlay || !photoA || !photoB) { if (onComplete) onComplete(); return; }
+  if (!overlay || !photoA || !photoB) return;
 
-  // ── collect all gallery photo srcs ──────────
-  const allImgs = Array.from(
-    document.querySelectorAll('.m-cell img, .polaroid img')
-  );
+  // gather every gallery photo src (already loaded by now)
   const seen = new Set();
   const srcs = [];
-  allImgs.forEach(img => {
+  document.querySelectorAll('.m-cell img, .polaroid img').forEach(img => {
     const s = img.getAttribute('src');
     if (s && !seen.has(s)) { seen.add(s); srcs.push(s); }
   });
 
-  if (srcs.length === 0) { endFlash(); return; }
+  if (srcs.length === 0) return;
 
-  // shuffle for variety each visit
+  // shuffle for variety
   for (let i = srcs.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [srcs[i], srcs[j]] = [srcs[j], srcs[i]];
   }
 
-  // preload all photos upfront for smooth playback
-  srcs.forEach(src => { const img = new Image(); img.src = src; });
+  // show overlay — use rAF so display:flex is painted before opacity kicks in
+  overlay.setAttribute('aria-hidden', 'false');
+  overlay.classList.add('mf-active');
+  document.body.style.overflow = 'hidden';
 
-  document.body.classList.add('mf-running');
+  // reset state from any previous run
+  photoA.classList.remove('mf-visible');
+  photoB.classList.remove('mf-visible');
+  photoA.style.zIndex = '1';
+  photoB.style.zIndex = '1';
+  mfFinal.classList.remove('mf-show');
+  overlay.classList.remove('mf-done');
 
-  // ── timing: smooth & consistent ──────────────
-  const HOLD_MS     = 480;  // how long each photo is fully visible
-  const FADE_MS     = 320;  // crossfade duration (matches CSS transition)
-  const CYCLE_MS    = HOLD_MS + FADE_MS;
+  // ── consistent timing — same speed for every photo ──
+  const HOLD_MS  = 520;   // how long each photo is fully visible
+  const FADE_MS  = 380;   // crossfade duration — matches CSS transition
+  const CYCLE_MS = HOLD_MS + FADE_MS;
 
-  // ── crossfade state ───────────────────────────
-  // photoA and photoB alternate: one fades in while the other fades out
-  let activeSlot = 'A';  // which img is currently showing
+  let activeSlot = 'A';
   let photoIndex = 0;
   let stopped    = false;
 
-  function getActive()  { return activeSlot === 'A' ? photoA : photoB; }
-  function getInactive(){ return activeSlot === 'A' ? photoB : photoA; }
+  function getActive()   { return activeSlot === 'A' ? photoA : photoB; }
+  function getInactive() { return activeSlot === 'A' ? photoB : photoA; }
 
   function triggerGlow() {
     if (!edgeGlow) return;
-    // remove then re-add to restart animation every time
     edgeGlow.classList.remove('pulse');
-    // force reflow so the browser registers the removal
-    void edgeGlow.offsetWidth;
+    void edgeGlow.offsetWidth; // force reflow to restart animation
     edgeGlow.classList.add('pulse');
   }
 
@@ -72,74 +74,76 @@ function runMemoryFlash(onComplete) {
     if (stopped) return;
     if (photoIndex >= srcs.length) { holdFinalPhoto(); return; }
 
-    const nextSrc  = srcs[photoIndex];
     const incoming = getInactive();
     const outgoing = getActive();
 
-    // subtle random scale — very slight, feels organic not shaky
-    const scale = 1 + Math.random() * 0.04;
-    incoming.style.transform = `scale(${scale})`;
+    // very subtle scale per photo — barely noticeable, just alive
+    incoming.style.transform = `scale(${1 + Math.random() * 0.03})`;
+    incoming.src             = srcs[photoIndex];
+    incoming.style.zIndex    = '2';
+    outgoing.style.zIndex    = '1';
 
-    // load next photo into the inactive slot, then crossfade
-    incoming.src = nextSrc;
-    incoming.style.zIndex = '2';
-    outgoing.style.zIndex = '1';
-
-    // trigger edge glow on every photo
     triggerGlow();
 
-    // fade in incoming, fade out outgoing simultaneously
     requestAnimationFrame(() => {
       incoming.classList.add('mf-visible');
       outgoing.classList.remove('mf-visible');
     });
 
-    // swap active slot
     activeSlot = activeSlot === 'A' ? 'B' : 'A';
     photoIndex++;
 
-    // schedule next
     setTimeout(showNextPhoto, CYCLE_MS);
   }
 
   function holdFinalPhoto() {
-    // final photo is already showing — gently straighten it
+    // straighten the final photo gently
     const current = getActive();
-    // set transition BEFORE changing transform (bug fix)
     current.style.transition = 'transform 1.2s ease, opacity 0.9s ease';
     current.style.transform  = 'scale(1)';
 
-    // show "every moment." text after a pause
-    setTimeout(() => {
-      mfFinal.classList.add('mf-show');
-    }, 500);
-
-    // fade out the whole overlay after the text has been readable
-    setTimeout(() => {
-      endFlash();
-    }, 2600);
+    setTimeout(() => { mfFinal.classList.add('mf-show'); }, 500);
+    setTimeout(endFlash, 2800);
   }
 
   function endFlash() {
     stopped = true;
     overlay.classList.add('mf-done');
-    document.body.classList.remove('mf-running');
+
     setTimeout(() => {
-      overlay.remove();
-      if (onComplete) onComplete();
-    }, 1500);
+      overlay.classList.remove('mf-active', 'mf-done');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      mfFinal.classList.remove('mf-show');
+    }, 1400);
   }
 
-  // skip button
   if (skipBtn) {
-    skipBtn.addEventListener('click', () => {
-      stopped = true;
-      endFlash();
-    });
+    // remove old listener if any, then add fresh one
+    const newSkip = skipBtn.cloneNode(true);
+    skipBtn.parentNode.replaceChild(newSkip, skipBtn);
+    newSkip.addEventListener('click', () => { stopped = true; endFlash(); });
   }
 
-  // start after a short pause so page is fully painted
-  setTimeout(showNextPhoto, 350);
+  setTimeout(showNextPhoto, 120);
+}
+
+function setupFlashButton() {
+  const btn = document.getElementById('flashTriggerBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    // brief loading state in case any images are still fetching
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    // small delay so any in-flight images can settle, then launch
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      runMemoryFlash();
+    }, 300);
+  });
 }
 
 
@@ -148,65 +152,23 @@ function runMemoryFlash(onComplete) {
    ───────────────────────────────────────────── */
 function updateDaysCounter() {
   const startDate = new Date('2025-10-16T00:00:00');
+  const today     = new Date();
+  const msPerDay  = 1000 * 60 * 60 * 24;
+  const days      = Math.floor((today - startDate) / msPerDay);
 
-  function calcUnits() {
-    const now = new Date();
-    let years  = now.getFullYear() - startDate.getFullYear();
-    let months = now.getMonth()    - startDate.getMonth();
-    let days   = now.getDate()     - startDate.getDate();
+  const el = document.getElementById('daysCount');
+  if (!el) return;
 
-    if (days < 0) {
-      months--;
-      const prevMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-      days += prevMonthEnd.getDate();
-    }
-    if (months < 0) { years--; months += 12; }
+  let current     = 0;
+  const steps     = Math.min(days, 80);
+  const increment = days / steps;
+  const interval  = 1800 / steps;
 
-    return { years, months, days };
-  }
-
-  function animateCount(elId, target) {
-    const el = document.getElementById(elId);
-    if (!el || target <= 0) { if (el) el.textContent = target; return; }
-    let current = 0;
-    const steps    = Math.min(target, 60);
-    const interval = Math.max(1200 / steps, 16);
-    const inc      = target / steps;
-    const timer = setInterval(() => {
-      current += inc;
-      if (current >= target) { el.textContent = target; clearInterval(timer); }
-      else { el.textContent = Math.floor(current); }
-    }, interval);
-  }
-
-  function render(animate) {
-    const { years, months, days } = calcUnits();
-
-    // show year unit ONLY if at least 1 full year has passed
-    const unitYear = document.getElementById('unitYear');
-    const sepYear  = document.getElementById('sepYear');
-    const show = years >= 1;
-    if (unitYear) unitYear.style.display = show ? 'flex' : 'none';
-    if (sepYear)  sepYear.style.display  = show ? 'block' : 'none';
-
-    if (animate) {
-      if (show) animateCount('countYear', years);
-      animateCount('countMonth', months);
-      animateCount('countDay',   days);
-    } else {
-      const set = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val;
-      };
-      if (show) set('countYear', years);
-      set('countMonth', months);
-      set('countDay',   days);
-    }
-  }
-
-  render(true);
-  // refresh silently every hour (days won't tick faster than that)
-  setInterval(() => render(false), 60 * 60 * 1000);
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= days) { current = days; clearInterval(timer); }
+    el.textContent = Math.floor(current).toLocaleString();
+  }, interval);
 }
 
 
@@ -480,24 +442,14 @@ function setupScrollFade() {
 
 /* ─────────────────────────────────────────────
    INIT
-   ─────────────────────────────────────────────
-   Memory flash runs FIRST.
-   Everything else starts only after it finishes,
-   so the heart rain greets you on a clean site.
    ───────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-
-  // set up everything that doesn't need to wait
   setupLightbox();
   setupCDPlayer();
   setupPolaroids();
   setupMobileNav();
   setupScrollFade();
   updateDaysCounter();
-
-  // run memory flash, then trigger heart rain after
-  runMemoryFlash(() => {
-    createHeartRain();
-  });
-
+  setupFlashButton();   // wire up the "relive our memories" button
+  createHeartRain();    // heart rain now runs immediately on load
 });

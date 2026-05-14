@@ -10,38 +10,6 @@
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════════════
-       MEMORY FLASH — plays on page load
-       All 39 photos flash like memories before your eyes.
-       JS pulls every img src from the gallery automatically.
-  ════════════════════════════════════════════════════════ -->
-  <div id="memory-flash">
-
-    <!-- two stacked photos for smooth crossfade — JS swaps between them -->
-    <div class="mf-photo-wrap">
-      <img class="mf-photo" id="mfPhotoA" src="" alt="" />
-      <img class="mf-photo" id="mfPhotoB" src="" alt="" />
-    </div>
-
-    <!-- edge glow — pulses from all 4 sides on each photo change -->
-    <div class="mf-edge-glow" id="mfEdgeGlow"></div>
-
-    <!-- film grain texture -->
-    <div class="mf-grain"></div>
-
-    <!-- vignette -->
-    <div class="mf-vignette"></div>
-
-    <!-- final hold text -->
-    <div class="mf-final" id="mfFinal">
-      <p class="mf-final-text">every moment.</p>
-    </div>
-
-    <!-- skip button -->
-    <button class="mf-skip" id="mfSkip">skip ›</button>
-
-  </div>
-
   <!-- ═══ HEART RAIN ═══ -->
   <div id="heart-rain" aria-hidden="true"></div>
 
@@ -102,30 +70,34 @@
     <p class="hero-sub">Inga</p>
     <div class="hero-badge">Since October 16</div>
     <div class="counter-wrap">
-      <div class="counter-units" id="counterUnits">
-
-        <!-- year — hidden by JS until 1 full year has passed -->
-        <div class="counter-unit" id="unitYear" style="display:none">
-          <span class="c-num" id="countYear">0</span>
-          <span class="c-label">year</span>
-        </div>
-        <div class="counter-sep" id="sepYear" style="display:none">·</div>
-
-        <div class="counter-unit">
-          <span class="c-num" id="countMonth">—</span>
-          <span class="c-label">months</span>
-        </div>
-        <div class="counter-sep">·</div>
-
-        <div class="counter-unit">
-          <span class="c-num" id="countDay">—</span>
-          <span class="c-label">days</span>
-        </div>
-
-      </div>
-      <p class="counter-since">together since October 16</p>
+      <div class="counter-num" id="daysCount">—</div>
+      <div class="counter-label">days together</div>
     </div>
+
+    <!-- ── Memory flash trigger button ── -->
+    <button class="flash-trigger-btn" id="flashTriggerBtn" aria-label="Relive our memories">
+      <span class="ftb-icon">♥</span>
+      <span class="ftb-text">relive our memories</span>
+    </button>
+
   </section>
+
+  <!-- ═══ MEMORY FLASH OVERLAY — hidden until button clicked ═══
+       Placed here so all gallery images are loaded before it runs
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="memory-flash" aria-hidden="true">
+    <div class="mf-photo-wrap">
+      <img class="mf-photo" id="mfPhotoA" src="" alt="" />
+      <img class="mf-photo" id="mfPhotoB" src="" alt="" />
+    </div>
+    <div class="mf-edge-glow" id="mfEdgeGlow"></div>
+    <div class="mf-grain"></div>
+    <div class="mf-vignette"></div>
+    <div class="mf-final" id="mfFinal">
+      <p class="mf-final-text">every moment.</p>
+    </div>
+    <button class="mf-skip" id="mfSkip">skip ›</button>
+  </div>
 
   <!-- ═══ CHAPTER CARDS ═══ -->
   <section class="chapters" id="story">
